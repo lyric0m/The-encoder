@@ -2,6 +2,8 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <iomanip>
+#include <ctime>
 
 using namespace std;
 
@@ -16,6 +18,131 @@ vector<uint8_t> gamma_encrypt(const vector<uint8_t>& data, const vector<uint8_t>
         processed_data[i] = data[i] ^ gamma[i % gamma.size()];
     }
     return processed_data;
+}
+
+// Функция для вывода гаммы в удобочитаемом формате
+void print_gamma(const vector<uint8_t>& gamma) {
+    cout << "Gamma: ";
+    for (const auto& byte : gamma) {
+        cout << hex << setw(2) << setfill('0') << static_cast<int>(byte) << " ";
+    }
+    cout << dec << endl;
+}
+
+// Функция для генерации обычной случайной гаммы
+vector<uint8_t> generate_random_gamma(size_t size) {
+    vector<uint8_t> gamma(size);
+    for (size_t i = 0; i < size; ++i) {
+        gamma[i] = static_cast<uint8_t>(rand() % 256);
+    }
+    return gamma;
+}
+
+// Функция для генерации гаммы в зависимости от секунд (Ш4.2.1)
+vector<uint8_t> generate_gamma_seconds_based() {
+    time_t now = time(0);
+    tm* local_time = localtime(&now);
+    int seconds = local_time->tm_sec;
+
+    vector<uint8_t> gamma(BLOCK_SIZE);
+
+    // Предопределённые гаммы
+    vector<uint8_t> gamma_even = {0xAB, 0xCD, 0xEF, 0x01,
+                                  0x23, 0x45, 0x67, 0x89,
+                                  0xAB, 0xCD, 0xEF, 0x01,
+                                  0x23, 0x45, 0x67, 0x89};
+
+    vector<uint8_t> gamma_odd = {0x67, 0x45, 0x23, 0x01,
+                                 0xAB, 0xCD, 0xEF, 0x89,
+                                 0x67, 0x45, 0x23, 0x01,
+                                 0xAB, 0xCD, 0xEF, 0x89};
+
+    if ((seconds / 10) % 2 == 0) {
+        gamma = gamma_even;
+    } else {
+        gamma = gamma_odd;
+    }
+
+    return gamma;
+}
+
+// Функция для генерации гаммы в зависимости от числа месяца (Ш4.2.2)
+vector<uint8_t> generate_gamma_date_based() {
+    time_t now = time(0);
+    tm* local_time = localtime(&now);
+    int day_of_month = local_time->tm_mday;
+
+    vector<uint8_t> gamma(BLOCK_SIZE);
+
+    // Используем те же гаммы, что и в предыдущей функции
+    vector<uint8_t> gamma_even = {0xAB, 0xCD, 0xEF, 0x01,
+                                  0x23, 0x45, 0x67, 0x89,
+                                  0xAB, 0xCD, 0xEF, 0x01,
+                                  0x23, 0x45, 0x67, 0x89};
+
+    vector<uint8_t> gamma_odd = {0x67, 0x45, 0x23, 0x01,
+                                 0xAB, 0xCD, 0xEF, 0x89,
+                                 0x67, 0x45, 0x23, 0x01,
+                                 0xAB, 0xCD, 0xEF, 0x89};
+
+    if (day_of_month % 2 == 0) {
+        gamma = gamma_even;
+    } else {
+        gamma = gamma_odd;
+    }
+
+    return gamma;
+}
+
+// Функция для генерации гаммы в зависимости от дня недели (Ш4.2.3)
+vector<uint8_t> generate_gamma_weekday_based() {
+    time_t now = time(0);
+    tm* local_time = localtime(&now);
+    int day_of_week = local_time->tm_wday; // 0 - воскресенье, 1 - понедельник, ..., 6 - суббота
+
+    vector<uint8_t> gamma(BLOCK_SIZE);
+
+    vector<uint8_t> gamma_mon_wed_fri = {0xAB, 0xCD, 0xEF, 0x01,
+                                         0x23, 0x45, 0x67, 0x89,
+                                         0xAB, 0xCD, 0xEF, 0x01,
+                                         0x23, 0x45, 0x67, 0x89};
+
+    vector<uint8_t> gamma_tue_thu = {0x67, 0x45, 0x89, 0xEF,
+                                     0xAB, 0xCD, 0x01, 0x23,
+                                     0x67, 0x45, 0x89, 0xEF,
+                                     0xAB, 0xCD, 0x01, 0x23};
+
+    vector<uint8_t> gamma_sat_sun = {0x67, 0x45, 0xCD, 0xAB,
+                                     0x89, 0xEF, 0x23, 0x01,
+                                     0x67, 0x45, 0xCD, 0xAB,
+                                     0x89, 0xEF, 0x23, 0x01};
+
+    if (day_of_week == 1 || day_of_week == 3 || day_of_week == 5) {
+        // Понедельник, среда, пятница
+        gamma = gamma_mon_wed_fri;
+    } else if (day_of_week == 2 || day_of_week == 4) {
+        // Вторник, четверг
+        gamma = gamma_tue_thu;
+    } else {
+        // Суббота, воскресенье
+        gamma = gamma_sat_sun;
+    }
+
+    return gamma;
+}
+
+// Функция для чтения гаммы, введённой пользователем
+vector<uint8_t> input_gamma(size_t size) {
+    vector<uint8_t> gamma(size);
+    cout << "Enter the gamma in hexadecimal format (" << size << " bytes): ";
+
+    for (size_t i = 0; i < size; ++i) {
+        int byte;
+        cin >> hex >> byte;
+        gamma[i] = static_cast<uint8_t>(byte);
+    }
+
+    return gamma;
 }
 
 // Функция для чтения файла и преобразования его содержимого в байты
@@ -55,14 +182,17 @@ bool is_file_encrypted(const vector<uint8_t>& data) {
     return true;
 }
 
+// Функция для проверки, правильно ли расшифрован файл
+bool check_decryption(const vector<uint8_t>& decrypted_data) {
+    // Файл должен быть без метки "ENCRYPTED" в конце после расшифровки
+    return !is_file_encrypted(decrypted_data);
+}
+
 int main() {
+    srand(time(0));
     string input_filename;
-    int choice;
+    int choice, encryption_mode;
 
-    // Пример гаммы (может быть произвольной длины)
-    vector<uint8_t> gamma = {0x0F, 0x0E, 0x0D, 0x0C, 0x0B, 0x0A, 0x09, 0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02, 0x01, 0x00};
-
-    // Выбор между шифрованием и расшифрованием
     cout << "Choose an option:\n";
     cout << "1. Encrypt file\n";
     cout << "2. Decrypt file\n";
@@ -79,7 +209,32 @@ int main() {
         if (is_file_encrypted(file_data)) {
             cout << "Error: The file is already encrypted." << endl;
         } else {
-            // Шифрование
+            cout << "Choose encryption mode:\n";
+            cout << "1. Standard random gamma\n";
+            cout << "2. Time-based gamma (Ш4.2.1)\n";
+            cout << "3. Date-based gamma (Ш4.2.2)\n";
+            cout << "4. Weekday-based gamma (Ш4.2.3)\n";
+            cin >> encryption_mode;
+
+            vector<uint8_t> gamma;
+
+            // Генерация гаммы в зависимости от выбранного режима
+            if (encryption_mode == 1) {
+                gamma = generate_random_gamma(BLOCK_SIZE);
+            } else if (encryption_mode == 2) {
+                gamma = generate_gamma_seconds_based();
+            } else if (encryption_mode == 3) {
+                gamma = generate_gamma_date_based();
+            } else if (encryption_mode == 4) {
+                gamma = generate_gamma_weekday_based();
+            } else {
+                cout << "Invalid encryption mode selected." << endl;
+                return 1;
+            }
+
+            // Вывод гаммы пользователю
+            print_gamma(gamma);
+
             // Шифрование данных
             vector<uint8_t> encrypted_data = gamma_encrypt(file_data, gamma);
 
@@ -99,19 +254,48 @@ int main() {
             cout << "Error: The file does not appear to be encrypted." << endl;
         } else {
             // Удаляем метку "ENCRYPTED" из файла перед расшифрованием
-            file_data.resize(file_data.size() - ENCRYPTION_MARK.size());
+            vector<uint8_t> encrypted_data = file_data;
+            encrypted_data.resize(file_data.size() - ENCRYPTION_MARK.size());
 
-            // Расшифрование данных (шифрование той же гаммой возвращает оригинал)
-            vector<uint8_t> decrypted_data = gamma_encrypt(file_data, gamma);
+            cout << "Choose decryption mode:\n";
+            cout << "1. Standard gamma (input gamma manually)\n";
+            cout << "2. Time-based gamma (Ш4.2.1)\n";
+            cout << "3. Date-based gamma (Ш4.2.2)\n";
+            cout << "4. Weekday-based gamma (Ш4.2.3)\n";
+            cin >> encryption_mode;
 
-            // Запись расшифрованных данных в тот же файл
-            write_file(input_filename, decrypted_data);
+            vector<uint8_t> gamma;
 
-            cout << "File decrypted and saved as " << input_filename << endl;
+            // Генерация гаммы в зависимости от выбранного режима
+            if (encryption_mode == 1) {
+                // Запрос гаммы у пользователя
+                gamma = input_gamma(BLOCK_SIZE);
+            } else if (encryption_mode == 2) {
+                gamma = generate_gamma_seconds_based();
+            } else if (encryption_mode == 3) {
+                gamma = generate_gamma_date_based();
+            } else if (encryption_mode == 4) {
+                gamma = generate_gamma_weekday_based();
+            } else {
+                cout << "Invalid decryption mode selected." << endl;
+                return 1;
+            }
+
+            // Расшифрование данных
+            vector<uint8_t> decrypted_data = gamma_encrypt(encrypted_data, gamma);
+
+            // Проверка, удалось ли расшифровать файл
+            if (check_decryption(decrypted_data)) {
+                // Запись расшифрованных данных в файл
+                write_file(input_filename, decrypted_data);
+                cout << "File decrypted and saved as " << input_filename << endl;
+            } else {
+                cout << "Error: Decryption failed. File remains encrypted." << endl;
+            }
         }
     } else {
         cout << "Invalid choice. Exiting..." << endl;
-    }
+
 
     return 0;
 }
