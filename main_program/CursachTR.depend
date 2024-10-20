@@ -1,0 +1,43 @@
+# depslib dependency file v1.0
+1729427130 source:c:\users\senia\documents\projectsc\cursachtr\main.cpp
+	<iostream>
+	<fstream>
+	<string>
+	<ctime>
+	<clocale>
+	"desigh.h"
+
+1728757438 source:c:\users\furma\downloads\cursachtr\main.cpp
+	<iostream>
+	<fstream>
+	<string>
+	<ctime>
+	<clocale>
+	"desigh.h"
+
+1728750368 c:\users\furma\downloads\cursachtr\desigh.h
+	<iostream>
+	<fstream>
+	<string>
+	<windows.h>
+
+1728750368 c:\users\senia\documents\projectsc\cursachtr\desigh.h
+	<iostream>
+	<fstream>
+	<string>
+	<windows.h>
+
+1729428953 source:c:\users\ab89\desktop\the-encoder\gamma_mod_69\main.cpp
+	<iostream>
+	<fstream>
+	<string>
+	<ctime>
+	<clocale>
+	"desigh.h"
+
+1728750368 c:\users\ab89\desktop\the-encoder\gamma_mod_69\desigh.h
+	<iostream>
+	<fstream>
+	<string>
+	<windows.h>
+

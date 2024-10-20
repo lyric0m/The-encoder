@@ -1,0 +1,71 @@
+\doxysection{main.\+cpp File Reference}
+\hypertarget{main_8cpp}{}\label{main_8cpp}\index{main.cpp@{main.cpp}}
+
+
+Программа для шифрования и дешифрования текстовых файлов с использованием различных гаммовых методов.  
+
+
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$fstream$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$ctime$>$}\newline
+{\ttfamily \#include $<$clocale$>$}\newline
+{\ttfamily \#include "{}desigh.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+char \mbox{\hyperlink{main_8cpp_a56cf25bafec7ffd4369d2283459c8482}{detect\+Majority\+Alphabet}} (const string \&text)
+\begin{DoxyCompactList}\small\item\em Определяет, каких символов в тексте больше — латинских или кириллических. \end{DoxyCompactList}\item 
+\Hypertarget{main_8cpp_acff0ceca8ab8bc62e9cc8180e4f653b1}\label{main_8cpp_acff0ceca8ab8bc62e9cc8180e4f653b1} 
+string {\bfseries generate\+Gamma} (char alphabet\+Type)
+\item 
+\Hypertarget{main_8cpp_a34154909edae0adb31142f02ce6bd027}\label{main_8cpp_a34154909edae0adb31142f02ce6bd027} 
+string {\bfseries generate\+Time\+Based\+Gamma} (int method\+Choice)
+\item 
+\Hypertarget{main_8cpp_a269b33ee6f188c6d784e1dbe3aef5053}\label{main_8cpp_a269b33ee6f188c6d784e1dbe3aef5053} 
+string {\bfseries xor\+Block} (const string \&text, const string \&gamma, int MODULUS)
+\item 
+\Hypertarget{main_8cpp_a930699196d1739fe263945456ad66e9e}\label{main_8cpp_a930699196d1739fe263945456ad66e9e} 
+unsigned char {\bfseries calculate\+Checksum} (const string \&text)
+\item 
+\Hypertarget{main_8cpp_a2650b007d885426f6947190b8976e764}\label{main_8cpp_a2650b007d885426f6947190b8976e764} 
+string {\bfseries remove\+Length\+Byte} (const string \&text)
+\item 
+\Hypertarget{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\label{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+int {\bfseries main} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{main_8cpp_a35ff0e57db31777604c4acb85d69a2c1}\label{main_8cpp_a35ff0e57db31777604c4acb85d69a2c1} 
+const int {\bfseries BLOCK\+\_\+\+SIZE} = 16
+\item 
+\Hypertarget{main_8cpp_adb296ab008d1d271e05ea135b122d989}\label{main_8cpp_adb296ab008d1d271e05ea135b122d989} 
+int {\bfseries MODULUS}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Программа для шифрования и дешифрования текстовых файлов с использованием различных гаммовых методов. 
+
+Программа поддерживает несколько методов шифрования, использует гаммирование с блочным шифром и может добавлять байт длины или контрольную сумму в конец зашифрованного текста. Для генерации гаммы могут использоваться различные факторы, такие как текущее время или набор символов. 
+
+\doxysubsection{Function Documentation}
+\Hypertarget{main_8cpp_a56cf25bafec7ffd4369d2283459c8482}\index{main.cpp@{main.cpp}!detectMajorityAlphabet@{detectMajorityAlphabet}}
+\index{detectMajorityAlphabet@{detectMajorityAlphabet}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{detectMajorityAlphabet()}{detectMajorityAlphabet()}}
+{\footnotesize\ttfamily \label{main_8cpp_a56cf25bafec7ffd4369d2283459c8482} 
+char detect\+Majority\+Alphabet (\begin{DoxyParamCaption}\item[{const string \&}]{text}{}\end{DoxyParamCaption})}
+
+
+
+Определяет, каких символов в тексте больше — латинских или кириллических. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em text} & Текст, который необходимо проанализировать. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Символ \textquotesingle{}L\textquotesingle{}, если латинских символов больше, или \textquotesingle{}C\textquotesingle{}, если кириллических символов больше. 
+\end{DoxyReturn}
